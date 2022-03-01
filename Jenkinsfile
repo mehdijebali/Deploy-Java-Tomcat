@@ -1,9 +1,15 @@
 pipeline {
     agent any
     stages {
+        stage('Init') {
+            steps {
+                echo 'Start the pipeline job by Mehdi Jebali'
+            }
+        }
         stage('Build Application') {
             steps {
-                sh 'mvn -f java-tomcat-sample/pom.xml clean package'
+                echo 'Build the application'
+                sh 'mvn -f pom.xml clean package'
             }
             post {
                 success {
@@ -14,18 +20,8 @@ pipeline {
         }
         stage('Deploy in Staging Environment'){
             steps{
-                build job: 'Deploy_Application_Staging_Env'
-
-            }
-            
-        }
-        stage('Deploy to Production'){
-            steps{
-                timeout(time:5, unit:'DAYS'){
-                    input message:'Approve PRODUCTION Deployment?'
-                }
-                build job: 'Deploy_Application_Prod_Env'
-            }
+                build job: 'Deploy_App_Staging_Env'
+            }   
         }
     }
 }
